@@ -7,19 +7,27 @@ class ToysController < ApplicationController
   end
 
   def create
-    toy = Toys.create(toy_params)
-    render json: toy, status: :created
+    toy = Toy.new(toy_params)
+    if toy.save
+      render json: toy
+    else
+      render json: { errors: toy.errors.full_messages }, status: :unprocessable_entity
+    end
   end
-
   def update
-    toy = Toy.find_by(id: params[:id])
-    toy.update(toy_params)
+    toy = Toy.find(params[:id])
+    if toy.update(toy_params)
+      render json: toy
+    else
+      render json: { errors: toy.errors.full_messages }, status: :unprocessable_entity
+    end
   end
+  
 
   def destroy
-    toy = Toy.find_by(id: params[:id])
+    toy = Toy.find(params[:id])
     toy.destroy
-    head :no_content
+    render json: { message: "Toy donated successfully" }
   end
 
   private
